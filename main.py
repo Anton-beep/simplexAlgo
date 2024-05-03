@@ -42,13 +42,13 @@ def simplex(input):
                     one_ind = ind
 
             if count_non_zero == 1 and one_ind != -1:
-                print(f"found a basic variable in column {i}: {input[one_ind][-1]}")
+                print("found a basic variable in column {}: {}".format(i, input[one_ind][-1]))
         print("simplex end")
         return
 
     # find smallest in the objective function for pivot column
     smallest_ind = find_smallest_index(input[-1])
-    print(f"smallest in the objective row -> ind: {smallest_ind}, el: {input[-1][smallest_ind]}")
+    print("smallest in the objective row -> ind: {}, el: {}".format(smallest_ind, input[-1][smallest_ind]))
     # find the smallest ratio to find the pivot element
     ratio = []
     for el in input[:-1]:
@@ -57,7 +57,7 @@ def simplex(input):
             continue
         ratio.append(el[-1] / el[smallest_ind])
 
-    print(f"ratios for the pivot column: {ratio}")
+    print("ratios for the pivot column: {}".format(ratio))
 
     # check if ratios are negative
     if all(map(lambda x: x < 0, ratio)):
@@ -66,13 +66,13 @@ def simplex(input):
         return
 
     smallest_ratio = find_smallest_index_positive(ratio)
-    print(f"smallest ratio -> ind: {smallest_ratio}, el: {ratio[smallest_ratio]}")
+    print("smallest ratio -> ind: {}, el: {}".format(smallest_ratio, ratio[smallest_ratio]))
 
     # now make all elements in a pivot column, except pivot element, zeroes
     print("make all elements in a pivot column, except pivot element, zeroes")
     pivot_element = input[smallest_ratio][smallest_ind]
 
-    print(f"make pivot element equal to 1: R{smallest_ratio + 1} -> R{smallest_ratio + 1} / {pivot_element}")
+    print("make pivot element equal to 1: R{} -> R{} / {}".format(smallest_ratio + 1, smallest_ratio + 1, pivot_element))
     for i in range(len(input[smallest_ratio])):
         input[smallest_ratio][i] = round(input[smallest_ratio][i] / pivot_element, 7)
 
@@ -81,7 +81,7 @@ def simplex(input):
             continue
 
         coef = el[smallest_ind]
-        print(f"R{ind + 1} -> R{ind + 1} - {coef} * R{smallest_ratio + 1}")
+        print("R{} -> R{} - {} * R{}".format(ind + 1, ind + 1, coef, smallest_ratio + 1))
         for i in range(len(el)):
             input[ind][i] = round(input[ind][i] - input[smallest_ratio][i] * coef, 7)
 
@@ -97,14 +97,13 @@ def simplex(input):
 
 
 example = [
-    [1, 1, 1, 1, 0, 0, -3, 59],
-    [2, 0, 3, 0, 1, 0, -5, 75],
-    [0, 1, 6, 0, 0, 1, -7, 54],
-    [-2, -1, -3, 0, 0, 0, 6, 0],
+    [3, 6, 1, 0, 0, 10000],
+    [7, 4, 0, 1, 0, 15000],
+    [-6, -5, 0, 0, 1, 0]
 ]
 
 # to make an example, write first columns as coefficients of the variables (x, y...), then slack variables (s1, s2...),
-# then sum of the coefficients times -1 (W or A), then right hand side values (R.H.S.).
+# then problem column (all zeroes except objective function) (P), then right hand side values (R.H.S.).
 # Last row is the objective function.
 
 simplex(example)
