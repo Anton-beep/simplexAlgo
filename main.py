@@ -1,6 +1,3 @@
-from pprint import pprint
-
-
 def is_all_positive(in_list):
     # in this function 0 is considered as positive
     return all(map(lambda x: x >= 0, in_list))
@@ -28,36 +25,50 @@ def find_smallest_index_positive(in_list):
     return min_index
 
 
-def simplex(input):
-    if is_all_positive(input[-1]):
-        print("all elements in the objective row are positive")
+def print_matrix(matrix):
+    for row in matrix:
+        print(list(map(lambda x: round(x, 3), row)))
 
-        for i in range(len(input[0])):
+
+def simplex(_input):
+    if is_all_positive(_input[-1]):
+        print("all elements in the objective\nrow are positive")
+        if input() != '':
+            return
+
+        for i in range(len(_input[0])):
             one_ind = -1
             count_non_zero = 0
-            for ind, el in enumerate(input[:-1]):
+            for ind, el in enumerate(_input[:-1]):
                 if el[i] != 0:
                     count_non_zero += 1
                 if el[i] == 1:
                     one_ind = ind
 
             if count_non_zero == 1 and one_ind != -1:
-                print("found a basic variable in column {}: {}".format(i, input[one_ind][-1]))
+                print("found a basic variable in\ncolumn {}: {}".format(i, round(_input[one_ind][-1], 3)))
+                input()
         print("simplex end")
         return
 
     # find smallest in the objective function for pivot column
-    smallest_ind = find_smallest_index(input[-1])
-    print("smallest in the objective row -> ind: {}, el: {}".format(smallest_ind, input[-1][smallest_ind]))
+    smallest_ind = find_smallest_index(_input[-1])
+    print("smallest in the objective row\n-> ind: {}, el: {}".format(smallest_ind, round(_input[-1][smallest_ind], 3)))
+    if input() != '':
+        return
     # find the smallest ratio to find the pivot element
     ratio = []
-    for el in input[:-1]:
+    for el in _input[:-1]:
         if el[smallest_ind] == 0:
             ratio.append(0)
             continue
         ratio.append(el[-1] / el[smallest_ind])
 
-    print("ratios for the pivot column: {}".format(ratio))
+    print("ratios for the pivot column:\n{}".format(
+        [round(el, 3) for el in ratio],
+    ))
+    if input() != '':
+        return
 
     # check if ratios are negative
     if all(map(lambda x: x < 0, ratio)):
@@ -66,27 +77,36 @@ def simplex(input):
         return
 
     smallest_ratio = find_smallest_index_positive(ratio)
-    print("smallest ratio -> ind: {}, el: {}".format(smallest_ratio, ratio[smallest_ratio]))
+    print("smallest ratio -> ind: {},\nel: {}".format(smallest_ratio, round(ratio[smallest_ratio], 3)))
+    if input() != '':
+        return
 
     # now make all elements in a pivot column, except pivot element, zeroes
-    print("make all elements in a pivot column, except pivot element, zeroes")
-    pivot_element = input[smallest_ratio][smallest_ind]
+    print("make all elements in a pivot\ncolumn, except pivot \nelement, zeroes")
+    if input() != '':
+        return
+    pivot_element = _input[smallest_ratio][smallest_ind]
 
-    print("make pivot element equal to 1: R{} -> R{} / {}".format(smallest_ratio + 1, smallest_ratio + 1, pivot_element))
-    for i in range(len(input[smallest_ratio])):
-        input[smallest_ratio][i] = round(input[smallest_ratio][i] / pivot_element, 7)
+    print(
+        "make pivot element equal to 1:\nR{} -> R{} / {}".format(smallest_ratio + 1, smallest_ratio + 1, round(pivot_element, 3)))
+    if input() != '':
+        return
+    for i in range(len(_input[smallest_ratio])):
+        _input[smallest_ratio][i] = round(_input[smallest_ratio][i] / pivot_element, 7)
 
-    for ind, el in enumerate(input):
+    for ind, el in enumerate(_input):
         if ind == smallest_ratio:
             continue
 
         coef = el[smallest_ind]
-        print("R{} -> R{} - {} * R{}".format(ind + 1, ind + 1, coef, smallest_ratio + 1))
+        print("R{} -> R{} - {} * R{}".format(ind + 1, ind + 1, round(coef, 3), smallest_ratio + 1))
+        if input() != '':
+            return
         for i in range(len(el)):
-            input[ind][i] = round(input[ind][i] - input[smallest_ratio][i] * coef, 7)
+            _input[ind][i] = round(_input[ind][i] - _input[smallest_ratio][i] * coef, 7)
 
-    pprint(input)
-    simplex(input)
+    print_matrix(_input)
+    simplex(_input)
 
 
 # example = [
@@ -102,8 +122,16 @@ example = [
     [-6, -5, 0, 0, 1, 0]
 ]
 
-# to make an example, write first columns as coefficients of the variables (x, y...), then slack variables (s1, s2...),
-# then problem column (all zeroes except objective function) (P), then right hand side values (R.H.S.).
-# Last row is the objective function.
+# to make an example, write
+# first columns as
+# coefficients of the
+# variables (x, y...), then
+# slack variables (s1, s2...),
+# then problem column (all
+# zeroes except objective
+# function) (P), then right
+# hand side values (R.H.S.).
+# Last row is the objective
+# function.
 
 simplex(example)
